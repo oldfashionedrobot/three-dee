@@ -42,14 +42,15 @@ module.exports = {
     usedExports: true,
     runtimeChunk: "single",
     splitChunks: {
-      chunks: "all"
-      // cacheGroups: {
-      //   vendor: {
-      //     test: /[\\/]node_modules[\\/]/,
-      //     name: "vendors",
-      //     chunks: "all"
-      //   }
-      // }
+      chunks: "all",
+      cacheGroups: {
+        vendor: {
+          test: /[\\/]node_modules[\\/]/,
+          name: "vendors",
+          chunks: "all",
+          reuseExistingChunk: true
+        }
+      }
     }
   }
 };
