@@ -1,11 +1,10 @@
-const path = require("path");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
-
 const BundleAnalyzerPlugin =
   require("webpack-bundle-analyzer").BundleAnalyzerPlugin;
 
+const path = require("path");
+
 module.exports = {
-  mode: "development",
   entry: {
     main: "./src/index.js"
   },
@@ -19,10 +18,14 @@ module.exports = {
       {
         test: /\.?js$/,
         exclude: /node_modules/,
+        sideEffects: false,
         use: {
           loader: "babel-loader",
           options: {
-            presets: ["@babel/preset-env", "@babel/preset-react"]
+            presets: [
+              ["@babel/preset-env", { modules: false }],
+              "@babel/preset-react"
+            ]
           }
         }
       }
@@ -38,7 +41,8 @@ module.exports = {
     })
   ],
   optimization: {
-    moduleIds: "deterministic",
+    // moduleIds: "deterministic",
+    minimize: false,
     usedExports: true,
     runtimeChunk: "single",
     splitChunks: {

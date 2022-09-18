@@ -6,12 +6,11 @@ import { cube } from "./lib/math.js";
 
 function App() {
   console.log(cube(4));
-  // console.log(square(4));
 
   function handleClick(event) {
-    import("./lib/print.js").then(({ default: print }) => {
-      print("Hello webpfdffdfdfdfdack!");
-    });
+    // import("./lib/print.js").then(({ default: print }) => {
+    //   print("Hello webpfdffdfdfdfdack!");
+    // });
   }
 
   return (
