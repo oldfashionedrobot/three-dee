@@ -1,6 +1,4 @@
 const HtmlWebpackPlugin = require("html-webpack-plugin");
-const BundleAnalyzerPlugin =
-  require("webpack-bundle-analyzer").BundleAnalyzerPlugin;
 
 const path = require("path");
 
@@ -32,17 +30,12 @@ module.exports = {
     ]
   },
   plugins: [
-    new BundleAnalyzerPlugin({
-      analyzerMode: "static",
-      openAnalyzer: false
-    }),
     new HtmlWebpackPlugin({
       template: "./src/index.html"
     })
   ],
   optimization: {
-    minimize: false,
-    // moduleIds: "deterministic",
+    moduleIds: "deterministic",
     usedExports: true,
     runtimeChunk: "single",
     splitChunks: {

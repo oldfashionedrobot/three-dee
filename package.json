@@ -13,10 +13,9 @@
     "not op_mini all"
   ],
   "scripts": {
-    "babel": "babel --presets @babel/preset-react src/index.js",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "webpack serve --open",
-    "build": "webpack --color"
+    "start": "webpack serve --open --config config/webpack.development.js",
+    "build": "webpack --color --config config/webpack.production.js"
   },
   "author": "",
   "license": "ISC",
@@ -29,7 +28,8 @@
     "webpack": "^5.74.0",
     "webpack-bundle-analyzer": "^4.6.1",
     "webpack-cli": "^4.10.0",
-    "webpack-dev-server": "^4.11.0"
+    "webpack-dev-server": "^4.11.0",
+    "webpack-merge": "^5.8.0"
   },
   "dependencies": {
     "lodash": "^4.17.21",
