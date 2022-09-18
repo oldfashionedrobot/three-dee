@@ -9,7 +9,6 @@ function App() {
 
   function handleClick(event) {
     import("./lib/print.js").then(({ default: print }) => {
-      console.log(print);
       print("Printing guy!");
     });
   }
