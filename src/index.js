@@ -1,21 +1,22 @@
 import React from "react";
 import { createRoot } from "react-dom/client";
 
-import _ from "lodash";
+import join from "lodash/join";
 import { cube } from "./lib/math.js";
 
 function App() {
   console.log(cube(4));
 
   function handleClick(event) {
-    // import("./lib/print.js").then(({ default: print }) => {
-    //   print("Hello webpfdffdfdfdfdack!");
-    // });
+    import("./lib/print.js").then(({ default: print }) => {
+      console.log(print);
+      print("Printing guy!");
+    });
   }
 
   return (
     <div onClick={(e) => handleClick(e)}>
-      {_.join(["Hello", "webpfdfdfdfdfdfack"], " ")}
+      {join(["Hello", "webpfdfdfdfdfdfack"], " ")}
     </div>
   );
 }

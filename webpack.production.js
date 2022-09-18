@@ -1,9 +1,10 @@
 const { merge } = require("webpack-merge");
-const common = require("./webpack.config.js");
+const baseConfig = require("./webpack.config.js");
 
-module.exports = merge(common, {
+module.exports = merge(baseConfig, {
   mode: "production",
+  devtool: "source-map",
   optimization: {
-    // minimize: false,
+    // minimize: false
   }
 });
