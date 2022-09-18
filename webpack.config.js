@@ -18,7 +18,6 @@ module.exports = {
       {
         test: /\.?js$/,
         exclude: /node_modules/,
-        sideEffects: false,
         use: {
           loader: "babel-loader",
           options: {
@@ -41,8 +40,7 @@ module.exports = {
     })
   ],
   optimization: {
-    // moduleIds: "deterministic",
-    minimize: false,
+    moduleIds: "deterministic",
     usedExports: true,
     runtimeChunk: "single",
     splitChunks: {
