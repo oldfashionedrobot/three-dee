@@ -14,8 +14,8 @@
   ],
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "webpack serve --open --config config/webpack.development.js",
-    "build": "webpack --color --config config/webpack.production.js"
+    "start": "webpack serve --open --config webpack.development.js",
+    "build": "webpack --color --config webpack.production.js"
   },
   "author": "",
   "license": "ISC",
