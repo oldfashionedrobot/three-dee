@@ -5,6 +5,7 @@ const BundleAnalyzerPlugin =
 const path = require("path");
 
 module.exports = {
+  target: ["browserslist"],
   entry: {
     main: "./src/index.js"
   },
@@ -40,7 +41,8 @@ module.exports = {
     })
   ],
   optimization: {
-    moduleIds: "deterministic",
+    minimize: false,
+    // moduleIds: "deterministic",
     usedExports: true,
     runtimeChunk: "single",
     splitChunks: {
