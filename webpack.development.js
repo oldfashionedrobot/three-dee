@@ -12,6 +12,14 @@ module.exports = merge(baseConfig, {
   devServer: {
     static: path.join(__dirname, "dist")
   },
+  module: {
+    rules: [
+      {
+        test: /\.css$/i,
+        use: ["style-loader", "css-loader"]
+      }
+    ]
+  },
   plugins: [
     new BundleAnalyzerPlugin({
       analyzerMode: "static",
