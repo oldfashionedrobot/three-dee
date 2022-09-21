@@ -13,16 +13,18 @@ function App() {
   useEffect(() => {
     const renderer = new THREE.WebGLRenderer({ canvas: canvasRef.current });
 
-    const fov = 75;
+    const fov = 40;
     const aspect = 2; // the canvas default
     const near = 0.1;
-    const far = 5;
+    const far = 1000;
     const camera = new THREE.PerspectiveCamera(fov, aspect, near, far);
 
-    camera.position.z = 2;
+    camera.position.z = 120;
 
     const scene = new THREE.Scene();
     const geometry = new THREE.BoxGeometry(1, 1, 1);
+
+    scene.background = new THREE.Color(0xaaaaaa);
 
     const cubes = [
       makeInstance(geometry, 0x44aa88, 0),
@@ -39,6 +41,12 @@ function App() {
 
     (function render(time) {
       time *= 0.001; // convert time to seconds
+
+      if (resizeRendererToDisplaySize(renderer)) {
+        const canvas = renderer.domElement;
+        camera.aspect = canvas.clientWidth / canvas.clientHeight;
+        camera.updateProjectionMatrix();
+      }
 
       cubes.forEach((cube, idx) => {
         const speed = 1 + idx * 0.1;
@@ -72,6 +80,20 @@ function App() {
     cube.position.x = x;
 
     return cube;
+  }
+
+  function resizeRendererToDisplaySize(renderer) {
+    const canvas = renderer.domElement;
+    // const pixelRatio = window.devicePixelRatio;
+    // const width = (canvas.clientWidth * pixelRatio) | 0;
+    // const height = (canvas.clientHeight * pixelRatio) | 0;
+    const width = canvas.clientWidth;
+    const height = canvas.clientHeight;
+    const needResize = canvas.width !== width || canvas.height !== height;
+    if (needResize) {
+      renderer.setSize(width, height, false);
+    }
+    return needResize;
   }
 }
 
