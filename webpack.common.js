@@ -26,6 +26,20 @@ module.exports = {
             ]
           }
         }
+      },
+      {
+        test: /\.(png|jpe?g)$/,
+        type: "asset/resource",
+        generator: {
+          filename: "images/[hash][ext][query]"
+        }
+      },
+      {
+        test: /\.(fbx)$/,
+        type: "asset/resource",
+        generator: {
+          filename: "models/[hash][ext][query]"
+        }
       }
     ]
   },
