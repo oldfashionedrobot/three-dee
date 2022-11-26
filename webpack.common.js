@@ -1,63 +1,68 @@
-const HtmlWebpackPlugin = require("html-webpack-plugin");
-
-const path = require("path");
+const HtmlWebpackPlugin = require('html-webpack-plugin');
+const path = require('path');
 
 module.exports = {
-  target: ["browserslist"],
+  target: ['browserslist'],
   entry: {
-    main: "./src/index.js"
+    main: './src/index.tsx'
   },
   output: {
-    filename: "[name].[contenthash].js",
-    path: path.resolve(__dirname, "dist"),
+    filename: '[name].[contenthash].js',
+    path: path.resolve(__dirname, 'dist'),
     clean: true
+  },
+  resolve: {
+    extensions: ['.tsx', '.ts', '.js']
   },
   module: {
     rules: [
       {
-        test: /\.?js$/,
+        test: /\.?(js|ts)x?$/,
         exclude: /node_modules/,
-        use: {
-          loader: "babel-loader",
-          options: {
-            presets: [
-              ["@babel/preset-env", { modules: false }],
-              "@babel/preset-react"
-            ]
-          }
-        }
+        use: [
+          {
+            loader: 'babel-loader',
+            options: {
+              presets: [
+                ['@babel/preset-env', { modules: false }],
+                '@babel/preset-react'
+              ]
+            }
+          },
+          { loader: 'ts-loader' }
+        ]
       },
       {
         test: /\.(png|jpe?g)$/,
-        type: "asset/resource",
+        type: 'asset/resource',
         generator: {
-          filename: "images/[hash][ext][query]"
+          filename: 'images/[hash][ext][query]'
         }
       },
       {
         test: /\.(fbx)$/,
-        type: "asset/resource",
+        type: 'asset/resource',
         generator: {
-          filename: "models/[hash][ext][query]"
+          filename: 'models/[hash][ext][query]'
         }
       }
     ]
   },
   plugins: [
     new HtmlWebpackPlugin({
-      template: "./src/index.html"
+      template: './src/index.html'
     })
   ],
   optimization: {
-    moduleIds: "deterministic",
+    moduleIds: 'deterministic',
     usedExports: true,
     splitChunks: {
-      chunks: "all",
+      chunks: 'all',
       cacheGroups: {
         vendor: {
           test: /[\\/]node_modules[\\/]/,
-          name: "vendors",
-          chunks: "all",
+          name: 'vendors',
+          chunks: 'all',
           reuseExistingChunk: true
         }
       }

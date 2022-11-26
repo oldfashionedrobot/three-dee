@@ -5,15 +5,15 @@ import ThreeDee from "./components/three-dee";
 
 import "./styles.css";
 
-function App() {
+function App({ name }: { name: string }): React.ReactElement {
   return (
     <React.StrictMode>
-      <h1>Look at the 3D!</h1>
+      <h1>{name}</h1>
       <ThreeDee />
     </React.StrictMode>
   );
 }
 
-const container = document.getElementById("root");
+const container: HTMLElement = document.getElementById("root");
 const root = createRoot(container);
 root.render(<App name="three-dee-stuff"></App>);

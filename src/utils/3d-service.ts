@@ -1,26 +1,29 @@
-import * as THREE from "three";
-import { FBXLoader } from "three/addons/loaders/FBXLoader.js";
-import { OrbitControls } from "three/addons/controls/OrbitControls.js";
-import { EffectComposer } from "three/addons/postprocessing/EffectComposer.js";
-import { RenderPass } from "three/addons/postprocessing/RenderPass.js";
-import { GlitchPass } from "three/addons/postprocessing/GlitchPass.js";
-import { UnrealBloomPass } from "three/addons/postprocessing/UnrealBloomPass.js";
+import * as THREE from 'three';
+import { FBXLoader } from 'three/addons/loaders/FBXLoader.js';
+// import { OrbitControls } from "three/addons/controls/OrbitControls.js";
+import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
+import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
+// import { GlitchPass } from "three/addons/postprocessing/GlitchPass.js";
+import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js';
 
-import checkerImg from "../assets/images/checker.png";
-import crystalFbx from "../assets/models/crystals_one_mat.fbx";
-import crystalNormalMap from "../assets/images/crystals_Normal.png";
-import crystalAlphaMap from "../assets/images/crystals_AlbedoTransparency.png";
-import crystalRedTex from "../assets/images/crystals_Emission_red.png";
-import crystalGreenTex from "../assets/images/crystals_Emission_green.png";
-import crystalBlueTex from "../assets/images/crystals_Emission_blue.png";
-import crystalPurpleTex from "../assets/images/crystals_Emission_purple.png";
+// import checkerImg from "../assets/images/checker.png";
+import crystalFbx from '../assets/models/crystals_one_mat.fbx';
+import crystalNormalMap from '../assets/images/crystals_Normal.png';
+import crystalAlphaMap from '../assets/images/crystals_AlbedoTransparency.png';
+import crystalRedTex from '../assets/images/crystals_Emission_red.png';
+import crystalGreenTex from '../assets/images/crystals_Emission_green.png';
+import crystalBlueTex from '../assets/images/crystals_Emission_blue.png';
+import crystalPurpleTex from '../assets/images/crystals_Emission_purple.png';
 
-import Stats from "../lib/stats";
+import Stats from '../lib/stats';
 
-export function init3d(canvasRef, showStats = true) {
-  let stats;
+export function init3d(
+  canvasRef: React.MutableRefObject<HTMLCanvasElement>,
+  showStats = true
+) {
+  let stats: any;
   if (showStats) {
-    stats = new Stats();
+    stats = Stats();
     stats.showPanels(0, 1, 2); // 0: fps, 1: ms, 2: mb, 3+: custom
     document.body.appendChild(stats.dom);
   }
@@ -79,44 +82,46 @@ export function init3d(canvasRef, showStats = true) {
     crystalPurpleTex
   ];
 
-  const objs = [];
+  const objs: THREE.Mesh[] = [];
   new FBXLoader().load(
     crystalFbx,
-    (object) => {
+    (object: any) => {
       // console.log(object.children)
       // const [wide1, wide2, _, long1, long2] = object.children;
 
       object.children.splice(2, 1);
-      const children = object.children.map((child, index) => {
-        child.scale.set(0.1, 0.1, 0.1);
-        child.position.set(index * 2 - 3, -1, 0);
+      const children = object.children.map(
+        (child: THREE.Mesh, index: number) => {
+          child.scale.set(0.1, 0.1, 0.1);
+          child.position.set(index * 2 - 3, -1, 0);
 
-        const tex = new THREE.TextureLoader().load(colorMaps[index]);
-        child.material = new THREE.MeshPhongMaterial({
-          map: tex,
-          emissiveMap: tex,
-          emissive: index === 2 ? "#777" : "#fff",
-          emissiveIntensity: 1.7,
-          alphaMap: alphaTex,
-          normalMap: normalTex
-        });
+          const tex = new THREE.TextureLoader().load(colorMaps[index]);
+          child.material = new THREE.MeshPhongMaterial({
+            map: tex,
+            emissiveMap: tex,
+            emissive: index === 2 ? '#777' : '#fff',
+            emissiveIntensity: 1.7,
+            alphaMap: alphaTex,
+            normalMap: normalTex
+          });
 
-        return child;
-      });
+          return child;
+        }
+      );
 
       objs.push(...children);
       scene.add(...children);
     },
-    (xhr) => {
-      console.log((xhr.loaded / xhr.total) * 100 + "% loaded");
+    (xhr: ProgressEvent) => {
+      console.log((xhr.loaded / xhr.total) * 100 + '% loaded');
     },
-    (error) => {
+    (error: Error) => {
       console.log(error);
     }
   );
 
-  let requestFrameId;
-  (function render(time) {
+  let requestFrameId: number;
+  (function render(time?: number) {
     stats.begin();
 
     time *= 0.001; // convert time to seconds
@@ -144,7 +149,8 @@ export function init3d(canvasRef, showStats = true) {
 
   return () => {
     [renderer, normalTex, alphaTex, ambientLight, light, ...objs].forEach(
-      (x) => {
+      (x: any) => {
+        // TODO: use some type guards / inferences here
         // TODO: not sure if this is correct/enough cleanup
         // console.log(x.material);
         x.material?.map.dispose();
@@ -157,7 +163,10 @@ export function init3d(canvasRef, showStats = true) {
   };
 }
 
-function resizeRendererToDisplaySize(renderer, composer) {
+function resizeRendererToDisplaySize(
+  renderer: THREE.Renderer,
+  composer: EffectComposer
+) {
   const canvas = renderer.domElement;
   const pixelRatio = window.devicePixelRatio;
   const width = (canvas.clientWidth * pixelRatio) | 0;

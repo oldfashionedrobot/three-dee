@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { init3d } from "../utils/3d-service";
 
 export default function ThreeDee() {
-  const canvasRef = useRef(null);
+  const canvasRef: React.MutableRefObject<HTMLCanvasElement> = useRef(null);
 
   useEffect(() => {
     return init3d(canvasRef);
