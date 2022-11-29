@@ -46,6 +46,8 @@
     "webpack-merge": "^5.8.0"
   },
   "dependencies": {
+    "@babylonjs/core": "^5.34.0",
+    "@babylonjs/loaders": "^5.34.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0"
   }
