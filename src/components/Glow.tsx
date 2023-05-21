@@ -1,6 +1,7 @@
+import React, { useRef } from 'react';
 import * as THREE from 'three';
-import { Billboard } from '@react-three/drei';
 import { LayerMaterial, Depth } from 'lamina';
+import { useFrame, useThree } from '@react-three/fiber';
 
 export type GlowProps = {
   color?: string;
@@ -14,9 +15,16 @@ export const Glow = ({
   scale = 0.5,
   near = -2,
   far = 1.4
-}: GlowProps) => (
-  <Billboard>
-    <mesh>
+}: GlowProps) => {
+  const ref = useRef<THREE.Mesh>(null);
+  const camera = useThree((state) => state.camera);
+
+  useFrame(() => {
+    ref.current && ref.current.lookAt(camera.position);
+  });
+
+  return (
+    <mesh ref={ref}>
       <circleGeometry args={[2 * scale, 16]} />
       <LayerMaterial
         transparent
@@ -64,5 +72,5 @@ export const Glow = ({
         />
       </LayerMaterial>
     </mesh>
-  </Billboard>
-);
+  );
+};

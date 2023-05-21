@@ -29,7 +29,7 @@ export type PlanetModelProps = {
   planetSpeed?: number;
   spinnerSpeed?: number;
   showGlow?: boolean;
-  glowLight?: boolean;
+  glowLight?: number;
   glowColor?: string;
   glowScale?: number;
   gltfProps?: Partial<GltfModelProps>;
@@ -46,7 +46,7 @@ export function PlanetModel({
   planetSpeed = -10,
   spinnerSpeed = 30,
   showGlow = true,
-  glowLight = false,
+  glowLight,
   glowColor = '#c4f1ff',
   glowScale = 1.1,
   gltfProps,
@@ -78,16 +78,16 @@ export function PlanetModel({
   });
 
   return (
-    <group scale={scale} position={position}>
+    <group scale={scale * 2} position={position}>
       <group ref={planetRef} rotation={rotation}>
         {debug && <axesHelper args={[5]}></axesHelper>}
         <GltfModel debug={debug} fileName={fileName} {...gltfProps} />
         {children}
       </group>
       {showGlow && (
-        <Glow scale={scale * glowScale} near={-25} color={glowColor} />
+        <Glow scale={scale * 2 * glowScale} near={-25} color={glowColor} />
       )}
-      {glowLight && <pointLight color={glowColor} intensity={2} />}
+      {glowLight && <pointLight color={glowColor} intensity={glowLight} />}
     </group>
   );
 }

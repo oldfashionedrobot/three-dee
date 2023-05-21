@@ -1,7 +1,7 @@
 import React, { forwardRef } from 'react';
 import { useLoader } from '@react-three/fiber';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
-import { Object3D, Mesh, MeshStandardMaterial } from 'three';
+import { Object3D, Mesh, MeshStandardMaterial, Color } from 'three';
 
 export type GltfModelProps = {
   fileName: string;
@@ -28,9 +28,13 @@ export const GltfModel = forwardRef(function (
 
   if (emissiveChild && emissiveIntensity) {
     // wanky, but whatever
-    const sunMesh: Mesh = gltf.scene.getObjectByName(emissiveChild) as Mesh;
-    const mat: MeshStandardMaterial = sunMesh.material as MeshStandardMaterial;
+    const childMesh: Mesh = gltf.scene.getObjectByName(emissiveChild) as Mesh;
+    const mat: MeshStandardMaterial =
+      childMesh.material as MeshStandardMaterial;
+
+    console.log(mat);
     mat.emissiveIntensity = emissiveIntensity;
+    mat.emissive = new Color(1, 1, 1);
   }
 
   if (debug) gltf.scene.traverse((obj) => console.log(obj.name));
