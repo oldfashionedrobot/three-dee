@@ -13,18 +13,13 @@ import styles from './App.module.css';
 const planetProps: { [key in PlanetFiles]?: Partial<PlanetModelProps> } = {
   [PlanetFiles.red]: {
     spinnerObjectName: 'Circle006',
-    debug: true,
     rotation: [rad(-20), 0, rad(20)],
     planetSpeed: -20
   },
   [PlanetFiles.resource]: {
     spinnerObjectName: 'ROCKET',
-    debug: true,
     rotation: [0, 0, rad(45)],
     spinnerSpeed: 60
-  },
-  [PlanetFiles.moon]: {
-    scale: 0.5
   }
 };
 
@@ -61,6 +56,9 @@ function App() {
 
         <Fragment key="scene">
           {planetsElems}
+          <Earth position={[0, 5, 0]} />
+          <ToxicPlanet position={[-4, 5, 0]} />
+          <RedPlanet position={[4, 5, 0]} />
           <Stars
             radius={100}
             depth={50}
@@ -84,6 +82,48 @@ function App() {
         </Fragment>
       </Canvas>
     </div>
+  );
+}
+
+function RedPlanet({ position }: { position: [number, number, number] }) {
+  return (
+    <PlanetModel
+      position={position}
+      fileName={PlanetFiles.red}
+      glowColor="#fac9ac"
+      spinnerObjectName="Circle006"
+      rotation={[rad(-20), 0, rad(20)]}
+      planetSpeed={-20}
+    />
+  );
+}
+
+function ToxicPlanet({ position }: { position: [number, number, number] }) {
+  return (
+    <PlanetModel
+      position={position}
+      fileName={PlanetFiles.toxic}
+      glowColor="#d1f59f"
+    />
+  );
+}
+
+function Earth({ position }: { position: [number, number, number] }) {
+  return (
+    <PlanetModel
+      planetSpeed={-15}
+      position={position}
+      rotation={[0, 0, rad(15)]}
+      fileName={PlanetFiles.earth}
+    >
+      <PlanetModel
+        position={[3, 0, 0]}
+        fileName={PlanetFiles.moon}
+        scale={0.5}
+        planetSpeed={25}
+        showGlow={false}
+      ></PlanetModel>
+    </PlanetModel>
   );
 }
 
