@@ -56,6 +56,7 @@ function App() {
 
         <Fragment key="scene">
           {planetsElems}
+          <Sun position={[0, 0, 20]} />
           <Earth position={[0, 5, 0]} />
           <ToxicPlanet position={[-4, 5, 0]} />
           <RedPlanet position={[4, 5, 0]} />
@@ -104,6 +105,23 @@ function ToxicPlanet({ position }: { position: [number, number, number] }) {
       position={position}
       fileName={PlanetFiles.toxic}
       glowColor="#d1f59f"
+    />
+  );
+}
+
+function Sun({ position }: { position?: [number, number, number] }) {
+  return (
+    <PlanetModel
+      position={position}
+      fileName={PlanetFiles.sun}
+      glowColor="#d1f59f"
+      glowLight={true}
+      scale={5}
+      glowScale={2}
+      gltfProps={{
+        emissiveChild: 'sun_sun_0',
+        emissiveIntensity: 6
+      }}
     />
   );
 }

@@ -3,7 +3,7 @@ import { Object3D } from 'three';
 import { rad } from '../utils';
 import { Glow } from './Glow';
 import { useFrame } from '@react-three/fiber';
-import { GltfModel } from './GltfModel';
+import { GltfModel, GltfModelProps } from './GltfModel';
 
 export enum PlanetFiles {
   toxic = '/planets/toxic_planet.glb',
@@ -16,7 +16,8 @@ export enum PlanetFiles {
   resource = '/planets/resource_planet.glb',
   crystal = '/planets/crystal_planet.glb',
   red = '/planets/red_planet.glb',
-  moon = '/planets/moon.glb'
+  moon = '/planets/moon.glb',
+  sun = '/planets/sun.glb'
 }
 
 export type PlanetModelProps = {
@@ -28,7 +29,10 @@ export type PlanetModelProps = {
   planetSpeed?: number;
   spinnerSpeed?: number;
   showGlow?: boolean;
+  glowLight?: boolean;
   glowColor?: string;
+  glowScale?: number;
+  gltfProps?: Partial<GltfModelProps>;
   debug?: boolean;
   children?: React.ReactNode;
 };
@@ -42,7 +46,10 @@ export function PlanetModel({
   planetSpeed = -10,
   spinnerSpeed = 30,
   showGlow = true,
+  glowLight = false,
   glowColor = '#c4f1ff',
+  glowScale = 1.1,
+  gltfProps,
   debug = false,
   children
 }: PlanetModelProps) {
@@ -74,10 +81,13 @@ export function PlanetModel({
     <group scale={scale} position={position}>
       <group ref={planetRef} rotation={rotation}>
         {debug && <axesHelper args={[5]}></axesHelper>}
-        <GltfModel debug={debug} fileName={fileName} />
+        <GltfModel debug={debug} fileName={fileName} {...gltfProps} />
         {children}
       </group>
-      {showGlow && <Glow scale={scale * 1.1} near={-25} color={glowColor} />}
+      {showGlow && (
+        <Glow scale={scale * glowScale} near={-25} color={glowColor} />
+      )}
+      {glowLight && <pointLight color={glowColor} intensity={2} />}
     </group>
   );
 }
