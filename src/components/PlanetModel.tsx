@@ -37,13 +37,15 @@ export type PlanetModelProps = {
   children?: React.ReactNode;
 };
 
+const SCALE_UPPER = 3;
+
 export function PlanetModel({
   position = [0, 0, 0],
   rotation = [0, 0, 0],
   scale = 1,
   spinnerObjectName,
   fileName = PlanetFiles.toxic,
-  planetSpeed = -10,
+  planetSpeed = -20,
   spinnerSpeed = 30,
   showGlow = true,
   glowLight,
@@ -78,14 +80,18 @@ export function PlanetModel({
   });
 
   return (
-    <group scale={scale * 2} position={position}>
+    <group scale={scale * SCALE_UPPER} position={position}>
       <group ref={planetRef} rotation={rotation}>
         {debug && <axesHelper args={[5]}></axesHelper>}
         <GltfModel debug={debug} fileName={fileName} {...gltfProps} />
         {children}
       </group>
       {showGlow && (
-        <Glow scale={scale * 2 * glowScale} near={-25} color={glowColor} />
+        <Glow
+          scale={scale * SCALE_UPPER * glowScale}
+          near={-25}
+          color={glowColor}
+        />
       )}
       {glowLight && <pointLight color={glowColor} intensity={glowLight} />}
     </group>

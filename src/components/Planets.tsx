@@ -83,7 +83,7 @@ export function Sun({ position }: PlanetProps) {
 export function Earth({ position }: PlanetProps) {
   return (
     <PlanetModel
-      planetSpeed={-15}
+      planetSpeed={-25}
       position={position}
       rotation={[0, 0, rad(15)]}
       fileName={PlanetFiles.earth}

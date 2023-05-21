@@ -32,7 +32,6 @@ export const GltfModel = forwardRef(function (
     const mat: MeshStandardMaterial =
       childMesh.material as MeshStandardMaterial;
 
-    console.log(mat);
     mat.emissiveIntensity = emissiveIntensity;
     mat.emissive = new Color(1, 1, 1);
   }

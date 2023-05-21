@@ -1,8 +1,8 @@
 import React, { useRef } from 'react';
-import { Canvas, useFrame } from '@react-three/fiber';
+import { useFrame } from '@react-three/fiber';
 import { Torus } from '@react-three/drei';
 import { rad } from '../utils';
-import { Mesh, DoubleSide, Group } from 'three';
+import { DoubleSide, Group } from 'three';
 
 export type OrbitProps = {
   radius?: number;
@@ -13,8 +13,8 @@ export type OrbitProps = {
 
 export function Orbit({
   radius = 12,
-  offset,
-  speed = 10,
+  offset = Math.random() * 360,
+  speed = Math.random() * 20 + 5,
   children
 }: OrbitProps) {
   const ref = useRef<Group>(null);
@@ -36,7 +36,7 @@ export function Orbit({
 
   return (
     <group ref={ref} rotation={[0, offset ? rad(offset) : 0, 0]}>
-      <Torus args={[radius, 0.03, 4, 50]} rotation={[rad(-90), 0, 0]}>
+      <Torus args={[radius, 0.03, 4, 80]} rotation={[rad(-90), 0, 0]}>
         {/* <axesHelper args={[20]} /> */}
         <meshBasicMaterial color="white" side={DoubleSide} />
       </Torus>
