@@ -37,7 +37,8 @@ export type PlanetModelProps = {
   children?: React.ReactNode;
 };
 
-const SCALE_UPPER = 3;
+const SCALE_UPPER = 5;
+const GLOW_SCALE = 1.5;
 
 export function PlanetModel({
   position = [0, 0, 0],
@@ -50,7 +51,7 @@ export function PlanetModel({
   showGlow = true,
   glowLight,
   glowColor = '#c4f1ff',
-  glowScale = 1.1,
+  glowScale = 1,
   gltfProps,
   debug = false,
   children
@@ -88,7 +89,7 @@ export function PlanetModel({
       </group>
       {showGlow && (
         <Glow
-          scale={scale * SCALE_UPPER * glowScale}
+          scale={scale * SCALE_UPPER * GLOW_SCALE * glowScale}
           near={-25}
           color={glowColor}
         />
