@@ -54,7 +54,6 @@ export const GltfModel = forwardRef(function (
     const childMesh: THREE.Mesh = gltf.scene.getObjectByName(
       childObject
     ) as THREE.Mesh;
-    console.log(childMesh);
 
     const materials = childMesh.material;
     // console.log(materials);

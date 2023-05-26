@@ -14,7 +14,7 @@ export type OrbitProps = {
 export function Orbit({
   radius = 12,
   offset = Math.random() * 360,
-  speed = Math.random() * 15 + 5,
+  speed = -Math.random() * 15 - 5,
   children
 }: OrbitProps) {
   const ref = useRef<Group>(null);
@@ -35,11 +35,13 @@ export function Orbit({
   });
 
   return (
-    <group ref={ref} rotation={[0, offset ? rad(offset) : 0, 0]}>
+    <>
       <Torus args={[radius, 0.03, 4, 80]} rotation={[rad(-90), 0, 0]}>
         <meshBasicMaterial color="white" side={DoubleSide} />
       </Torus>
-      {childrenWithProps}
-    </group>
+      <group ref={ref} rotation={[0, offset ? rad(offset) : 0, 0]}>
+        {childrenWithProps}
+      </group>
+    </>
   );
 }

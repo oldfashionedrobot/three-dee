@@ -64,7 +64,7 @@ export function ResourcePlanet({ position }: PlanetProps) {
     <PlanetModel
       position={position}
       fileName={PlanetFiles.resource}
-      glowColor="#94f4ff"
+      glowColor="#9ff5bc"
       spinnerObjectName="ROCKET"
       spinnerSpeed={100}
       rotation={[0, 0, rad(45)]}
@@ -113,7 +113,7 @@ export function Sun({ position }: PlanetProps) {
     <PlanetModel
       position={position}
       fileName={PlanetFiles.sun}
-      glowColor="#d1f59f"
+      glowColor="#f5e89f"
       glowLight={2}
       scale={3}
       glowScale={1.1}

@@ -42,6 +42,10 @@ const orbits = [
   }
 ];
 
+const AppContext = React.createContext({
+  selectPlanet: (planet: any) => {}
+});
+
 function App() {
   const controlsRef = useRef<any>(null);
 
@@ -49,57 +53,67 @@ function App() {
     if (controlsRef.current) controlsRef.current.enabled = true;
   }
 
+  function selectPlanet(planet: any) {
+    console.log(planet);
+  }
+
   return (
     <div className={styles.app}>
-      <Canvas camera={{ position: camStartPos }}>
-        <Fragment key="debug">
-          {/* <axesHelper args={[20]} /> */}
-          <Stats />
-        </Fragment>
+      <AppContext.Provider value={{ selectPlanet }}>
+        <Canvas camera={{ position: camStartPos }}>
+          <Fragment key="debug">
+            {/* <axesHelper args={[20]} /> */}
+            <Stats />
+          </Fragment>
 
-        <Fragment key="interaction">
-          <CamAnimator onAnimationComplete={() => enableControls()} />
-          <OrbitControls ref={controlsRef} enabled={false} enablePan={false} />
-        </Fragment>
+          <Fragment key="interaction">
+            <CamAnimator onAnimationComplete={() => enableControls()} />
+            <OrbitControls
+              ref={controlsRef}
+              enabled={false}
+              enablePan={false}
+            />
+          </Fragment>
 
-        <Fragment key="lighting">
-          <ambientLight intensity={0.1} />
-        </Fragment>
+          <Fragment key="lighting">
+            <ambientLight intensity={0.1} />
+          </Fragment>
 
-        <Fragment key="scene">
-          <Planets.Sun />
-          {orbits.map((orbit, index) => (
-            <Orbit key={index} {...orbit}></Orbit>
-          ))}
-          <Stars
-            radius={100}
-            depth={50}
-            count={5000}
-            factor={4}
-            saturation={0}
-            fade
-            speed={2}
-          />
-          <Environment
-            background
-            files={[
-              '/sky/right.png',
-              '/sky/left.png',
-              '/sky/top.png',
-              '/sky/bottom.png',
-              '/sky/front.png',
-              '/sky/back.png'
-            ]}
-          />
-        </Fragment>
-      </Canvas>
+          <Fragment key="scene">
+            <Planets.Sun />
+            {orbits.map((orbit, index) => (
+              <Orbit key={index} {...orbit}></Orbit>
+            ))}
+            <Stars
+              radius={100}
+              depth={50}
+              count={5000}
+              factor={4}
+              saturation={0}
+              fade
+              speed={2}
+            />
+            <Environment
+              background
+              files={[
+                '/sky/right.png',
+                '/sky/left.png',
+                '/sky/top.png',
+                '/sky/bottom.png',
+                '/sky/front.png',
+                '/sky/back.png'
+              ]}
+            />
+          </Fragment>
+        </Canvas>
+      </AppContext.Provider>
     </div>
   );
 }
 
 const animateTime = 5;
-const camStartPos = new THREE.Vector3(0, 0, -100);
-const camEndPos = new THREE.Vector3(0, 20, -50);
+const camStartPos = new THREE.Vector3(0, 50, -200);
+const camEndPos = new THREE.Vector3(-100, 20, 0);
 const zeroVector = new THREE.Vector3(0, 0, 0);
 const ease = 1;
 
