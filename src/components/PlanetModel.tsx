@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import React, { useRef, useMemo } from 'react';
 import { Object3D } from 'three';
 import { rad } from '../utils';
 import { Glow } from './Glow';
@@ -40,61 +40,63 @@ export type PlanetModelProps = {
 const SCALE_UPPER = 5;
 const GLOW_SCALE = 1.5;
 
-export function PlanetModel({
-  position = [0, 0, 0],
-  rotation = [0, 0, 0],
-  scale = 1,
-  spinnerObjectName,
-  fileName = PlanetFiles.toxic,
-  planetSpeed = -20,
-  spinnerSpeed = 30,
-  showGlow = true,
-  glowLight,
-  glowColor = '#c4f1ff',
-  glowScale = 1,
-  gltfProps,
-  debug = false,
-  children
-}: PlanetModelProps) {
-  const planetRef = useRef<THREE.Group>(null);
-  const childRef = useRef<THREE.Object3D>();
+export const PlanetModel: React.FC<PlanetModelProps> = React.memo(
+  ({
+    position = [0, 0, 0] as const,
+    rotation = [0, 0, 0] as const,
+    scale = 1,
+    spinnerObjectName,
+    fileName = PlanetFiles.toxic,
+    planetSpeed = -20,
+    spinnerSpeed = 30,
+    showGlow = true,
+    glowLight,
+    glowColor = '#c4f1ff',
+    glowScale = 1,
+    gltfProps,
+    debug = false,
+    children
+  }) => {
+    const planetRef = useRef<THREE.Group>(null);
+    const childRef = useRef<THREE.Object3D>();
+    const radSpeed = useMemo(() => rad(planetSpeed), [planetSpeed]);
+    const radSpinnerSpeed = useMemo(() => rad(spinnerSpeed), [spinnerSpeed]);
+    const groupScaleVal = useMemo(() => scale * SCALE_UPPER, [scale]);
+    const glowScaleVal = useMemo(
+      () => scale * SCALE_UPPER * GLOW_SCALE * glowScale,
+      [scale, glowScale]
+    );
 
-  useFrame(({ clock }) => {
-    if (planetRef.current) {
-      if (!childRef.current && spinnerObjectName) {
-        // init child ref
-        childRef.current = planetRef.current.getObjectByName(spinnerObjectName);
+    useFrame((_, delta) => {
+      if (planetRef.current) {
+        if (!childRef.current && spinnerObjectName) {
+          // init child ref
+          childRef.current =
+            planetRef.current.getObjectByName(spinnerObjectName);
+        }
+
+        // rotate planet
+        planetRef.current.rotateY(radSpeed * delta);
+
+        // rotate child spinner
+        childRef.current &&
+          childRef.current.rotateOnWorldAxis(
+            Object3D.DEFAULT_UP,
+            radSpinnerSpeed * delta
+          );
       }
+    });
 
-      const delta = Math.max(1 / 60, clock.getDelta());
-
-      // rotate planet
-      planetRef.current.rotateY(rad(planetSpeed) * delta);
-
-      // rotate child spinner
-      childRef.current &&
-        childRef.current.rotateOnWorldAxis(
-          Object3D.DEFAULT_UP,
-          rad(spinnerSpeed) * delta
-        );
-    }
-  });
-
-  return (
-    <group scale={scale * SCALE_UPPER} position={position}>
-      <group ref={planetRef} rotation={rotation}>
-        {debug && <axesHelper args={[5]}></axesHelper>}
-        <GltfModel debug={debug} fileName={fileName} {...gltfProps} />
-        {children}
+    return (
+      <group scale={groupScaleVal} position={position}>
+        <group ref={planetRef} rotation={rotation as any}>
+          {debug && <axesHelper args={[5]}></axesHelper>}
+          <GltfModel debug={debug} fileName={fileName} {...gltfProps} />
+          {children}
+        </group>
+        {showGlow && <Glow scale={glowScaleVal} near={-25} color={glowColor} />}
+        {glowLight && <pointLight color={glowColor} intensity={glowLight} />}
       </group>
-      {showGlow && (
-        <Glow
-          scale={scale * SCALE_UPPER * GLOW_SCALE * glowScale}
-          near={-25}
-          color={glowColor}
-        />
-      )}
-      {glowLight && <pointLight color={glowColor} intensity={glowLight} />}
-    </group>
-  );
-}
+    );
+  }
+);

@@ -2,6 +2,7 @@ import React, { Fragment, useRef } from 'react';
 import { Canvas, useThree, useFrame } from '@react-three/fiber';
 import * as THREE from 'three';
 import { Stats, OrbitControls, Stars, Environment } from '@react-three/drei';
+import { Perf } from 'r3f-perf';
 import * as Planets from './components/Planets';
 import { Orbit } from './components/Orbit';
 
@@ -57,13 +58,18 @@ function App() {
     console.log(planet);
   }
 
+  const perfOpts = {
+    matrixUpdate: true
+  };
+
   return (
     <div className={styles.app}>
       <AppContext.Provider value={{ selectPlanet }}>
         <Canvas camera={{ position: camStartPos }}>
           <Fragment key="debug">
             {/* <axesHelper args={[20]} /> */}
-            <Stats />
+            <Perf {...perfOpts} />
+            {/* <Stats /> */}
           </Fragment>
 
           <Fragment key="interaction">
