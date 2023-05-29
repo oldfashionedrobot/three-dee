@@ -1,9 +1,10 @@
-import React, { forwardRef } from 'react';
-import { useLoader } from '@react-three/fiber';
+import React, { forwardRef, useRef } from 'react';
+import { ThreeEvent, useLoader } from '@react-three/fiber';
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
 
 export type GltfModelProps = {
+  onClick?: () => void;
   fileName: string;
   objectName?: string;
   emissiveChild?: string | string[];
@@ -15,6 +16,7 @@ export type GltfModelProps = {
 
 export const GltfModel = forwardRef(function (
   {
+    onClick,
     fileName,
     objectName,
     emissiveChild,
@@ -27,6 +29,11 @@ export const GltfModel = forwardRef(function (
 ) {
   const gltf = useLoader(GLTFLoader, fileName);
   let model: THREE.Object3D = gltf.scene;
+
+  function handleClick(e: ThreeEvent<MouseEvent>) {
+    e.stopPropagation();
+    onClick && onClick();
+  }
 
   if (emissiveChild && emissiveIntensity) {
     // wanky, but whatever
@@ -41,14 +48,7 @@ export const GltfModel = forwardRef(function (
 
   if (objectName) model = gltf.scene.getObjectByName(objectName) || model;
 
-  return (
-    <primitive
-      ref={ref}
-      object={model}
-      {...rest}
-      // onClick={(e: any) => console.log(e.object.name)}
-    />
-  );
+  return <primitive onClick={handleClick} ref={ref} object={model} {...rest} />;
 
   function setEmissive(childObject: string, intensity: number) {
     const childMesh: THREE.Mesh = gltf.scene.getObjectByName(

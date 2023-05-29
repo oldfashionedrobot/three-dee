@@ -1,9 +1,10 @@
-import React, { useRef, useMemo } from 'react';
+import React, { useRef, useMemo, useContext } from 'react';
 import { Object3D } from 'three';
 import { rad } from '../utils';
 import { Glow } from './Glow';
-import { useFrame } from '@react-three/fiber';
+import { ThreeEvent, useFrame } from '@react-three/fiber';
 import { GltfModel, GltfModelProps } from './GltfModel';
+import { AppContext } from '../App';
 
 export enum PlanetFiles {
   toxic = '/planets/toxic_planet.glb',
@@ -21,6 +22,7 @@ export enum PlanetFiles {
 }
 
 export type PlanetModelProps = {
+  disableSelect?: boolean;
   position?: [number, number, number];
   rotation?: [number, number, number];
   scale?: number;
@@ -42,6 +44,7 @@ const GLOW_SCALE = 1.5;
 
 export const PlanetModel: React.FC<PlanetModelProps> = React.memo(
   ({
+    disableSelect = false,
     position = [0, 0, 0] as const,
     rotation = [0, 0, 0] as const,
     scale = 1,
@@ -57,6 +60,7 @@ export const PlanetModel: React.FC<PlanetModelProps> = React.memo(
     debug = false,
     children
   }) => {
+    const { selectPlanet } = useContext(AppContext);
     const planetRef = useRef<THREE.Group>(null);
     const childRef = useRef<THREE.Object3D>();
     const radSpeed = useMemo(() => rad(planetSpeed), [planetSpeed]);
@@ -87,11 +91,21 @@ export const PlanetModel: React.FC<PlanetModelProps> = React.memo(
       }
     });
 
+    function handleClick() {
+      if (disableSelect === true) return;
+      planetRef.current && selectPlanet(planetRef.current);
+    }
+
     return (
       <group scale={groupScaleVal} position={position}>
         <group ref={planetRef} rotation={rotation as any}>
           {debug && <axesHelper args={[5]}></axesHelper>}
-          <GltfModel debug={debug} fileName={fileName} {...gltfProps} />
+          <GltfModel
+            onClick={handleClick}
+            debug={debug}
+            fileName={fileName}
+            {...gltfProps}
+          />
           {children}
         </group>
         {showGlow && <Glow scale={glowScaleVal} near={-25} color={glowColor} />}

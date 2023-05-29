@@ -86,6 +86,7 @@ export function Earth({ position }: PlanetProps) {
       fileName={PlanetFiles.earth}
     >
       <PlanetModel
+        disableSelect={true}
         position={[3, 0, 0]}
         fileName={PlanetFiles.moon}
         scale={0.1}

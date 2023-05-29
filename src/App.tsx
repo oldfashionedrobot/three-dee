@@ -1,4 +1,4 @@
-import React, { Fragment, useRef } from 'react';
+import React, { Fragment, forwardRef, useRef } from 'react';
 import { Canvas, useThree, useFrame } from '@react-three/fiber';
 import * as THREE from 'three';
 import { OrbitControls, Stars, Environment } from '@react-three/drei';
@@ -38,24 +38,21 @@ const orbits = [
   }
 ];
 
-const AppContext = React.createContext({
-  selectPlanet: (planet: any) => {}
+export const AppContext = React.createContext({
+  selectPlanet: (planet: THREE.Object3D) => {}
 });
 
 function App() {
-  const controlsRef = useRef<any>(null);
-
-  function enableControls() {
-    if (controlsRef.current) controlsRef.current.enabled = true;
-  }
-
-  function selectPlanet(planet: any) {
-    console.log(planet);
-  }
+  const camCtrlRef = useRef();
 
   const perfOpts = {
     matrixUpdate: true
   };
+
+  function selectPlanet(planet: THREE.Object3D) {
+    console.log('click recieved');
+    // setCamTarget(planet);
+  }
 
   return (
     <div className={styles.app}>
@@ -68,12 +65,7 @@ function App() {
           </Fragment>
 
           <Fragment key="interaction">
-            <CamAnimator onAnimationComplete={() => enableControls()} />
-            <OrbitControls
-              ref={controlsRef}
-              enabled={false}
-              enablePan={false}
-            />
+            <CamController ref={camCtrlRef} />
           </Fragment>
 
           <Fragment key="lighting">
@@ -118,28 +110,39 @@ const camEndPos = new THREE.Vector3(-100, 20, 0);
 const zeroVector = new THREE.Vector3(0, 0, 0);
 const ease = 1;
 
-function CamAnimator({
-  onAnimationComplete
-}: {
-  onAnimationComplete: () => void;
-}) {
-  const camera = useThree((state) => state.camera);
-  const shouldAnimate = useRef(true);
+const CamController = forwardRef(
+  ({ camTarget }: { camTarget?: THREE.Object3D }, ref) => {
+    const camTargetVector = useRef(new THREE.Vector3());
+    const controlsRef = useRef<any>(null);
+    const camera = useThree((state) => state.camera);
+    const shouldAnimate = useRef(true);
 
-  useFrame(({ clock }) => {
-    if (shouldAnimate.current === false) return;
-    const t = Math.min(1, clock.getElapsedTime() / animateTime);
-    const f = -ease * t * t + (1 + ease) * t;
-    camera.position.lerpVectors(camStartPos, camEndPos, f);
-    camera.lookAt(zeroVector);
+    useFrame(({ clock }) => {
+      if (shouldAnimate.current === true) {
+        const t = Math.min(1, clock.getElapsedTime() / animateTime);
+        const f = -ease * t * t + (1 + ease) * t;
+        camera.position.lerpVectors(camStartPos, camEndPos, f);
+        camera.lookAt(zeroVector);
 
-    if (t >= 1) {
-      onAnimationComplete();
-      shouldAnimate.current = false;
+        if (t >= 1) {
+          enableControls();
+          shouldAnimate.current = false;
+        }
+      } else if (camTarget) {
+        controlsRef.current.target = camTarget.getWorldPosition(
+          camTargetVector.current
+        );
+      }
+    });
+
+    function enableControls() {
+      if (controlsRef.current) controlsRef.current.enabled = true;
     }
-  });
 
-  return <></>;
-}
+    return (
+      <OrbitControls ref={controlsRef} enabled={false} enablePan={false} />
+    );
+  }
+);
 
 export default App;
