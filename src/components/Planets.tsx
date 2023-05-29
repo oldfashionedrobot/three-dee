@@ -11,38 +11,20 @@ export function DesertPlanet({ position }: PlanetProps) {
     <PlanetModel
       position={position}
       glowColor="#fac9ac"
-      scale={0.6}
       fileName={PlanetFiles.desert}
     />
   );
 }
 
 export function IcePlanet({ position }: PlanetProps) {
-  return (
-    <PlanetModel
-      gltfProps={{
-        emissiveChild: 'Circle006',
-        emissiveIntensity: 8,
-        emissiveColor: '#eff7b2'
-      }}
-      position={position}
-      scale={1.2}
-      fileName={PlanetFiles.ice}
-    />
-  );
+  return <PlanetModel position={position} fileName={PlanetFiles.ice} />;
 }
 
 export function CrystalPlanet({ position }: PlanetProps) {
   return (
     <PlanetModel
-      gltfProps={{
-        emissiveChild: 'Gem',
-        emissiveIntensity: 0.1,
-        emissiveColor: '#a8eaf7'
-      }}
       glowColor="#dea8f7"
       position={position}
-      scale={1.2}
       fileName={PlanetFiles.crystal}
     />
   );
@@ -52,23 +34,8 @@ export function CandyPlanet({ position }: PlanetProps) {
   return (
     <PlanetModel
       position={position}
-      scale={2}
       glowColor="#f7c8a8"
       fileName={PlanetFiles.candy}
-    />
-  );
-}
-
-export function ResourcePlanet({ position }: PlanetProps) {
-  return (
-    <PlanetModel
-      position={position}
-      fileName={PlanetFiles.resource}
-      glowColor="#9ff5bc"
-      spinnerObjectName="ROCKET"
-      spinnerSpeed={100}
-      rotation={[0, 0, rad(45)]}
-      planetSpeed={-20}
     />
   );
 }
@@ -76,16 +43,11 @@ export function ResourcePlanet({ position }: PlanetProps) {
 export function RedPlanet({ position }: PlanetProps) {
   return (
     <PlanetModel
-      gltfProps={{
-        emissiveChild: 'Circle006',
-        emissiveIntensity: 0.3,
-        emissiveColor: '#faf1ac'
-      }}
       position={position}
       fileName={PlanetFiles.red}
       glowColor="#fab1ac"
-      spinnerObjectName="Circle006"
-      scale={1.5}
+      spinnerObjectName="Rings"
+      spinnerSpeed={50}
       rotation={[rad(-20), 0, rad(20)]}
       planetSpeed={-20}
     />
@@ -95,12 +57,6 @@ export function RedPlanet({ position }: PlanetProps) {
 export function ToxicPlanet({ position }: PlanetProps) {
   return (
     <PlanetModel
-      gltfProps={{
-        emissiveChild: ['TOXIC_SLUG', 'TOXIC_RIVER'],
-        emissiveIntensity: 1,
-        emissiveColor: 'rgb(62,170,10)'
-      }}
-      scale={0.8}
       position={position}
       fileName={PlanetFiles.toxic}
       glowColor="#d1f59f"
@@ -117,10 +73,6 @@ export function Sun({ position }: PlanetProps) {
       glowLight={2}
       scale={3}
       glowScale={1.1}
-      gltfProps={{
-        emissiveChild: 'sun_sun_0',
-        emissiveIntensity: 6
-      }}
     />
   );
 }

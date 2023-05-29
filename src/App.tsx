@@ -1,7 +1,7 @@
 import React, { Fragment, useRef } from 'react';
 import { Canvas, useThree, useFrame } from '@react-three/fiber';
 import * as THREE from 'three';
-import { Stats, OrbitControls, Stars, Environment } from '@react-three/drei';
+import { OrbitControls, Stars, Environment } from '@react-three/drei';
 import { Perf } from 'r3f-perf';
 import * as Planets from './components/Planets';
 import { Orbit } from './components/Orbit';
@@ -17,28 +17,23 @@ const orbits = [
   },
   { radius: 60, offset: -90, children: <Planets.Earth /> },
   {
-    radius: 78,
-    offset: -135,
-    children: <Planets.ResourcePlanet />
-  },
-  {
-    radius: 98,
-    offset: -180,
+    radius: 75,
+    offset: -90,
     children: <Planets.CandyPlanet />
   },
   {
-    radius: 121,
-    offset: -225,
+    radius: 90,
+    offset: -135,
     children: <Planets.RedPlanet />
   },
   {
-    radius: 140,
-    offset: -270,
+    radius: 105,
+    offset: -180,
     children: <Planets.CrystalPlanet />
   },
   {
-    radius: 155,
-    offset: -315,
+    radius: 120,
+    offset: -225,
     children: <Planets.IcePlanet />
   }
 ];
@@ -90,7 +85,7 @@ function App() {
             {orbits.map((orbit, index) => (
               <Orbit key={index} {...orbit}></Orbit>
             ))}
-            <Stars
+            {/* <Stars
               radius={100}
               depth={50}
               count={5000}
@@ -98,7 +93,7 @@ function App() {
               saturation={0}
               fade
               speed={2}
-            />
+            /> */}
             <Environment
               background
               files={[
