@@ -1,4 +1,9 @@
-import React, { Fragment, forwardRef, useRef } from 'react';
+import React, {
+  Fragment,
+  forwardRef,
+  useImperativeHandle,
+  useRef
+} from 'react';
 import { Canvas, useThree, useFrame } from '@react-three/fiber';
 import * as THREE from 'three';
 import { OrbitControls, Stars, Environment } from '@react-three/drei';
@@ -38,20 +43,20 @@ const orbits = [
   }
 ];
 
+const perfOpts = {
+  matrixUpdate: true
+};
+
 export const AppContext = React.createContext({
   selectPlanet: (planet: THREE.Object3D) => {}
 });
 
 function App() {
-  const camCtrlRef = useRef();
-
-  const perfOpts = {
-    matrixUpdate: true
-  };
+  const camCtrlRef = useRef<CamContrllerHandle>(null);
 
   function selectPlanet(planet: THREE.Object3D) {
     console.log('click recieved');
-    // setCamTarget(planet);
+    camCtrlRef.current && camCtrlRef.current.setTarget(planet);
   }
 
   return (
@@ -109,40 +114,56 @@ const camStartPos = new THREE.Vector3(0, 50, -200);
 const camEndPos = new THREE.Vector3(-100, 20, 0);
 const zeroVector = new THREE.Vector3(0, 0, 0);
 const ease = 1;
+const camTargetVector = new THREE.Vector3();
 
-const CamController = forwardRef(
-  ({ camTarget }: { camTarget?: THREE.Object3D }, ref) => {
-    const camTargetVector = useRef(new THREE.Vector3());
-    const controlsRef = useRef<any>(null);
-    const camera = useThree((state) => state.camera);
-    const shouldAnimate = useRef(true);
+type CamContrllerHandle = {
+  setTarget(tgt: THREE.Object3D): void;
+  clearTarget(): void;
+};
 
-    useFrame(({ clock }) => {
-      if (shouldAnimate.current === true) {
-        const t = Math.min(1, clock.getElapsedTime() / animateTime);
-        const f = -ease * t * t + (1 + ease) * t;
-        camera.position.lerpVectors(camStartPos, camEndPos, f);
-        camera.lookAt(zeroVector);
-
-        if (t >= 1) {
-          enableControls();
-          shouldAnimate.current = false;
+const CamController = forwardRef<CamContrllerHandle>((_props, ref) => {
+  useImperativeHandle(
+    ref,
+    () => {
+      return {
+        setTarget(tgt: THREE.Object3D) {
+          camTarget.current = tgt;
+        },
+        clearTarget() {
+          camTarget.current = undefined;
         }
-      } else if (camTarget) {
-        controlsRef.current.target = camTarget.getWorldPosition(
-          camTargetVector.current
-        );
+      };
+    },
+    []
+  );
+
+  const camera = useThree((state) => state.camera);
+  const camTarget = useRef<THREE.Object3D>();
+  const controlsRef = useRef<any>(null);
+  const shouldAnimate = useRef(true);
+
+  useFrame(({ clock }) => {
+    if (shouldAnimate.current === true) {
+      const t = Math.min(1, clock.getElapsedTime() / animateTime);
+      const f = -ease * t * t + (1 + ease) * t;
+      camera.position.lerpVectors(camStartPos, camEndPos, f);
+      camera.lookAt(zeroVector);
+
+      if (t >= 1) {
+        enableControls();
+        shouldAnimate.current = false;
       }
-    });
-
-    function enableControls() {
-      if (controlsRef.current) controlsRef.current.enabled = true;
+    } else if (camTarget.current) {
+      controlsRef.current.target =
+        camTarget.current.getWorldPosition(camTargetVector);
     }
+  });
 
-    return (
-      <OrbitControls ref={controlsRef} enabled={false} enablePan={false} />
-    );
+  function enableControls() {
+    if (controlsRef.current) controlsRef.current.enabled = true;
   }
-);
+
+  return <OrbitControls ref={controlsRef} enabled={false} enablePan={false} />;
+});
 
 export default App;
