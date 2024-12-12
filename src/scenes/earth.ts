@@ -1,5 +1,8 @@
 import * as THREE from 'three';
-import { initScene } from '../core';
+import { init } from '../core';
+
+const { scene, camera, animate } = init({ useControls: true });
+camera.position.z = 5;
 
 const loader = new THREE.TextureLoader();
 const geo = new THREE.IcosahedronGeometry(1, 12);
@@ -38,19 +41,16 @@ earthGroup.add(lightsMesh);
 earthGroup.add(cloudsMesh);
 earthGroup.add(glowMesh);
 
-initScene(
-  (scene) => {
-    scene.add(earthGroup);
-    scene.add(sunLight);
-    scene.add(stars);
-  },
-  () => {
-    earthMesh.rotation.y += 0.002;
-    lightsMesh.rotation.y += 0.002;
-    cloudsMesh.rotation.y += 0.0025;
-    glowMesh.rotation.y += 0.002;
-  }
-);
+scene.add(earthGroup);
+scene.add(sunLight);
+scene.add(stars);
+
+animate(() => {
+  earthMesh.rotation.y += 0.002;
+  lightsMesh.rotation.y += 0.002;
+  cloudsMesh.rotation.y += 0.0025;
+  glowMesh.rotation.y += 0.002;
+});
 
 function getStarfield(numStars = 500) {
   function randomSpherePoint() {

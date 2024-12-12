@@ -1,54 +1,88 @@
 import * as THREE from 'three';
+import { EffectComposer } from 'three/examples/jsm/Addons.js';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 
-const CAM_Z = 5;
+type Options = { useControls?: boolean; useComposer?: boolean };
 
-export function initScene(
-  buildFn: (scene: THREE.Scene) => void,
-  animateFn: () => void
-) {
-  const w = window.innerWidth;
-  const h = window.innerHeight;
+type Output = {
+  scene: THREE.Scene;
+  camera: THREE.Camera;
+  animate: (frameCallback: (t: number) => void) => void;
+};
 
-  const scene = new THREE.Scene();
+type OutputWithComposer = Output & { composer: EffectComposer };
 
-  const camera = new THREE.PerspectiveCamera(75, w / h, 0.1, 1000);
-  camera.position.z = CAM_Z;
+type InitReturn<T extends Options> = T['useComposer'] extends true
+  ? OutputWithComposer
+  : Output;
 
+export function init<T extends Options>(options: T): InitReturn<T> {
+  const { useControls, useComposer } = options;
   const renderer = new THREE.WebGLRenderer({ antialias: true });
-  renderer.setSize(w, h);
+  renderer.setSize(window.innerWidth, window.innerHeight);
   renderer.toneMapping = THREE.ACESFilmicToneMapping;
   renderer.outputColorSpace = THREE.LinearSRGBColorSpace;
   document.body.appendChild(renderer.domElement);
 
-  const controls = new OrbitControls(camera, renderer.domElement);
-  controls.enableDamping = true;
-  controls.dampingFactor = 0.03;
+  const scene = new THREE.Scene();
 
-  buildFn(scene);
-  animate();
-
-  window.addEventListener(
-    'resize',
-    () => handleWindowResize(camera, renderer),
-    false
+  const camera = new THREE.PerspectiveCamera(
+    75,
+    window.innerWidth / window.innerHeight,
+    0.1,
+    1000
   );
 
-  function animate() {
-    requestAnimationFrame(animate);
+  initResizer(camera, renderer);
 
-    animateFn();
+  let controls: OrbitControls;
+  if (useControls) {
+    controls = new OrbitControls(camera, renderer.domElement);
+    controls.enableDamping = true;
+    controls.dampingFactor = 0.03;
+  }
 
-    controls.update();
-    renderer.render(scene, camera);
+  let composer: EffectComposer;
+  if (useComposer === true) {
+    composer = new EffectComposer(renderer);
+    return {
+      scene,
+      camera,
+      animate,
+      composer
+    } as InitReturn<T>;
+  }
+
+  return { scene, camera, animate } as unknown as InitReturn<T>;
+
+  function animate(frameCallback: (t: number) => void) {
+    const animateFrame = (t: number = 0) => {
+      requestAnimationFrame(animateFrame);
+      frameCallback(t);
+      render(t);
+    };
+
+    animateFrame();
+  }
+
+  function render(t: number) {
+    if (useComposer) {
+      composer.render(t);
+    } else {
+      renderer.render(scene, camera);
+    }
   }
 }
 
-export function handleWindowResize(
+function initResizer(
   camera: THREE.PerspectiveCamera,
   renderer: THREE.Renderer
 ) {
-  camera.aspect = window.innerWidth / window.innerHeight;
-  camera.updateProjectionMatrix();
-  renderer.setSize(window.innerWidth, window.innerHeight);
+  window.addEventListener('resize', handleWindowResize, false);
+
+  function handleWindowResize() {
+    camera.aspect = window.innerWidth / window.innerHeight;
+    camera.updateProjectionMatrix();
+    renderer.setSize(window.innerWidth, window.innerHeight);
+  }
 }
