@@ -19,14 +19,14 @@ const COLORS = {
 
 const BG_COLOR = COLORS.navyBlue;
 const FOG_COLOR = COLORS.yellow;
-const LINES_COLOR = COLORS.white;
+const LINES_COLOR = COLORS.red;
 const WALL_COLOR = COLORS.navyBlue;
 
 const { composer, scene, camera, animate } = init({
   useComposer: true,
   backgroundColor: BG_COLOR
 });
-scene.fog = new THREE.FogExp2(FOG_COLOR, 0.05);
+scene.fog = new THREE.FogExp2(FOG_COLOR, 0.08);
 
 const renderScene = new RenderPass(scene, camera);
 const bloomPass = new UnrealBloomPass(
@@ -56,11 +56,12 @@ const lineMesh = new THREE.LineSegments(edges, lineMat);
 scene.add(lineMesh);
 
 const numBoxes = 60;
-const size = 0.075;
+const size = 0.08;
 const boxGeo = new THREE.EdgesGeometry(
   new THREE.BoxGeometry(size, size, size),
   0.2
 );
+
 const boxes = new Array<THREE.LineSegments>(numBoxes);
 const boxColors = Object.values(COLORS).slice(0, 8);
 for (let i = 0; i < numBoxes; i++) {
@@ -70,6 +71,7 @@ for (let i = 0; i < numBoxes; i++) {
     emissive: clr,
     emissiveIntensity: 2
   });
+
   const edgesMesh = new THREE.LineSegments(boxGeo, lineMat);
 
   const p = (i / numBoxes + Math.random() * 0.1) % 1;
@@ -103,3 +105,13 @@ animate((t: number) => {
     box.rotation.y += Math.random() * 0.01;
   }
 });
+
+function getRandomDirection() {
+  const randomVector = new THREE.Vector3(
+    Math.random() * 2 - 1,
+    Math.random() * 2 - 1,
+    Math.random() * 2 - 1
+  );
+
+  return randomVector.normalize();
+}
