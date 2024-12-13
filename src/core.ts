@@ -2,12 +2,18 @@ import * as THREE from 'three';
 import { EffectComposer } from 'three/examples/jsm/Addons.js';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 
-type Options = { useControls?: boolean; useComposer?: boolean };
+type AnimationFrameCallback = (t: number) => void;
+
+type Options = {
+  backgroundColor?: THREE.ColorRepresentation;
+  useControls?: boolean;
+  useComposer?: boolean;
+};
 
 type Output = {
   scene: THREE.Scene;
   camera: THREE.Camera;
-  animate: (frameCallback: (t: number) => void) => void;
+  animate: (cb: AnimationFrameCallback) => void;
 };
 
 type OutputWithComposer = Output & { composer: EffectComposer };
@@ -17,20 +23,25 @@ type InitReturn<T extends Options> = T['useComposer'] extends true
   : Output;
 
 export function init<T extends Options>(options: T): InitReturn<T> {
-  const { useControls, useComposer } = options;
+  const { useControls, useComposer, backgroundColor = 0x000000 } = options;
   const renderer = new THREE.WebGLRenderer({ antialias: true });
+  renderer.setPixelRatio(window.devicePixelRatio);
   renderer.setSize(window.innerWidth, window.innerHeight);
   renderer.toneMapping = THREE.ACESFilmicToneMapping;
   renderer.outputColorSpace = THREE.LinearSRGBColorSpace;
+  renderer.setClearColor(backgroundColor);
   document.body.appendChild(renderer.domElement);
 
+  const clock = new THREE.Clock();
+
   const scene = new THREE.Scene();
+  scene.background = new THREE.Color(backgroundColor);
 
   const camera = new THREE.PerspectiveCamera(
     75,
     window.innerWidth / window.innerHeight,
     0.1,
-    1000
+    30
   );
 
   initResizer(camera, renderer);
@@ -55,22 +66,16 @@ export function init<T extends Options>(options: T): InitReturn<T> {
 
   return { scene, camera, animate } as unknown as InitReturn<T>;
 
-  function animate(frameCallback: (t: number) => void) {
-    const animateFrame = (t: number = 0) => {
-      requestAnimationFrame(animateFrame);
-      frameCallback(t);
-      render(t);
-    };
-
-    animateFrame();
-  }
-
-  function render(t: number) {
-    if (useComposer) {
-      composer.render(t);
-    } else {
-      renderer.render(scene, camera);
-    }
+  function animate(cb: AnimationFrameCallback) {
+    renderer.setAnimationLoop(() => {
+      const t = clock.getElapsedTime();
+      cb(t);
+      if (useComposer) {
+        composer.render();
+      } else {
+        renderer.render(scene, camera);
+      }
+    });
   }
 }
 
