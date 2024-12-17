@@ -1,6 +1,7 @@
 import * as THREE from 'three';
 import { EffectComposer } from 'three/examples/jsm/Addons.js';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
+import Stats from 'three/examples/jsm/libs/stats.module.js';
 
 type AnimationFrameCallback = (t: number) => void;
 
@@ -8,11 +9,12 @@ type Options = {
   backgroundColor?: THREE.ColorRepresentation;
   useControls?: boolean;
   useComposer?: boolean;
+  useStats?: boolean;
 };
 
 type Output = {
   scene: THREE.Scene;
-  camera: THREE.Camera;
+  camera: THREE.PerspectiveCamera;
   animate: (cb: AnimationFrameCallback) => void;
 };
 
@@ -23,7 +25,12 @@ type InitReturn<T extends Options> = T['useComposer'] extends true
   : Output;
 
 export function init<T extends Options>(options: T): InitReturn<T> {
-  const { useControls, useComposer, backgroundColor = 0x000000 } = options;
+  const {
+    useControls,
+    useComposer,
+    useStats,
+    backgroundColor = 0x000000
+  } = options;
   const renderer = new THREE.WebGLRenderer({ antialias: true });
   renderer.setPixelRatio(window.devicePixelRatio);
   renderer.setSize(window.innerWidth, window.innerHeight);
@@ -53,6 +60,12 @@ export function init<T extends Options>(options: T): InitReturn<T> {
     controls.dampingFactor = 0.03;
   }
 
+  let stats: Stats;
+  if (useStats) {
+    stats = new Stats();
+    document.body.appendChild(stats.dom);
+  }
+
   let composer: EffectComposer;
   if (useComposer === true) {
     composer = new EffectComposer(renderer);
@@ -70,6 +83,9 @@ export function init<T extends Options>(options: T): InitReturn<T> {
     renderer.setAnimationLoop(() => {
       const t = clock.getElapsedTime();
       cb(t);
+
+      controls?.update();
+      stats?.update();
       if (useComposer) {
         composer.render();
       } else {
