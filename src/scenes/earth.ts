@@ -1,56 +1,61 @@
 import * as THREE from 'three';
-import { init } from '../core';
+import { init } from '../lib/core';
 
-const { scene, camera, animate } = init({ useControls: true });
-camera.position.z = 5;
+export default function () {
+  const { scene, camera, animate } = init({
+    useControls: true,
+    useStats: true
+  });
+  camera.position.z = 5;
 
-const loader = new THREE.TextureLoader();
-const geo = new THREE.IcosahedronGeometry(1, 12);
-const mat = new THREE.MeshStandardMaterial({
-  map: loader.load('./textures/00_earthmap1k.jpg')
-});
-const earthMesh = new THREE.Mesh(geo, mat);
+  const loader = new THREE.TextureLoader();
+  const geo = new THREE.IcosahedronGeometry(1, 12);
+  const mat = new THREE.MeshStandardMaterial({
+    map: loader.load('./textures/00_earthmap1k.jpg')
+  });
+  const earthMesh = new THREE.Mesh(geo, mat);
 
-const lightsMat = new THREE.MeshBasicMaterial({
-  map: loader.load('./textures/03_earthLights1k.jpg'),
-  blending: THREE.AdditiveBlending
-});
-const lightsMesh = new THREE.Mesh(geo, lightsMat);
-const cloudsMat = new THREE.MeshStandardMaterial({
-  map: loader.load('./textures/04_earthcloudmap.jpg'),
-  transparent: true,
-  blending: THREE.AdditiveBlending
-});
-const cloudsMesh = new THREE.Mesh(geo, cloudsMat);
-cloudsMesh.scale.setScalar(1.003);
+  const lightsMat = new THREE.MeshBasicMaterial({
+    map: loader.load('./textures/03_earthLights1k.jpg'),
+    blending: THREE.AdditiveBlending
+  });
+  const lightsMesh = new THREE.Mesh(geo, lightsMat);
+  const cloudsMat = new THREE.MeshStandardMaterial({
+    map: loader.load('./textures/04_earthcloudmap.jpg'),
+    transparent: true,
+    blending: THREE.AdditiveBlending
+  });
+  const cloudsMesh = new THREE.Mesh(geo, cloudsMat);
+  cloudsMesh.scale.setScalar(1.003);
 
-const stars = getStarfield(20000);
+  const stars = getStarfield(20000);
 
-const sunLight = new THREE.DirectionalLight(0xffffff);
-sunLight.position.set(-2, 0.5, 1.5);
+  const sunLight = new THREE.DirectionalLight(0xffffff);
+  sunLight.position.set(-2, 0.5, 1.5);
 
-const fresnelMat = getFresnelMat();
-const glowMesh = new THREE.Mesh(geo, fresnelMat);
-glowMesh.scale.setScalar(1.01);
+  const fresnelMat = getFresnelMat();
+  const glowMesh = new THREE.Mesh(geo, fresnelMat);
+  glowMesh.scale.setScalar(1.01);
 
-const earthGroup = new THREE.Group();
-earthGroup.rotation.z = (-23.4 * Math.PI) / 180;
+  const earthGroup = new THREE.Group();
+  earthGroup.rotation.z = (-23.4 * Math.PI) / 180;
 
-earthGroup.add(earthMesh);
-earthGroup.add(lightsMesh);
-earthGroup.add(cloudsMesh);
-earthGroup.add(glowMesh);
+  earthGroup.add(earthMesh);
+  earthGroup.add(lightsMesh);
+  earthGroup.add(cloudsMesh);
+  earthGroup.add(glowMesh);
 
-scene.add(earthGroup);
-scene.add(sunLight);
-scene.add(stars);
+  scene.add(earthGroup);
+  scene.add(sunLight);
+  scene.add(stars);
 
-animate(() => {
-  earthMesh.rotation.y += 0.002;
-  lightsMesh.rotation.y += 0.002;
-  cloudsMesh.rotation.y += 0.0025;
-  glowMesh.rotation.y += 0.002;
-});
+  animate(() => {
+    earthMesh.rotation.y += 0.002;
+    lightsMesh.rotation.y += 0.002;
+    cloudsMesh.rotation.y += 0.0025;
+    glowMesh.rotation.y += 0.002;
+  });
+}
 
 function getStarfield(numStars = 500) {
   function randomSpherePoint() {

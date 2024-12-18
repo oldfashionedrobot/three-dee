@@ -1,36 +1,47 @@
 import * as THREE from 'three';
-import { init } from '../core';
+import { init } from '../lib/core';
 import { GUI } from 'dat.gui';
 
-const { camera, scene, animate } = init({ useControls: true });
-camera.position.z = 1.5;
+export default function () {
+  const { camera, scene, animate } = init({
+    useControls: true
+  });
 
-// scene.background = new THREE.TextureLoader().load(
-//   'https://sbcode.net/img/grid.png'
-// );
-scene.background = new THREE.CubeTextureLoader()
-  .setPath('https://sbcode.net/img/')
-  .load(['px.png', 'nx.png', 'py.png', 'ny.png', 'pz.png', 'nz.png']);
-// scene.backgroundBlurriness = 0.5;
+  scene.add(new THREE.GridHelper());
+  scene.add(new THREE.AxesHelper(5));
 
-const geo = new THREE.BoxGeometry();
-const mat = new THREE.MeshNormalMaterial({ wireframe: true });
-const cube = new THREE.Mesh(geo, mat);
-scene.add(cube);
+  const geometry = new THREE.BoxGeometry();
+  const material = new THREE.MeshNormalMaterial({ wireframe: true });
 
-const gui = new GUI();
+  const cube = new THREE.Mesh(geometry, material);
+  scene.add(cube);
 
-const cubeFolder = gui.addFolder('Cube');
-cubeFolder.add(cube.rotation, 'x', 0, Math.PI * 2);
-cubeFolder.add(cube.rotation, 'y', 0, Math.PI * 2);
-cubeFolder.add(cube.rotation, 'z', 0, Math.PI * 2);
-cubeFolder.open();
+  const gui = new GUI();
 
-const cameraFolder = gui.addFolder('Camera');
-cameraFolder.add(camera.position, 'z', 0, 20);
-cameraFolder.open();
+  const cubeFolder = gui.addFolder('Cube');
+  cubeFolder.add(cube, 'visible');
+  cubeFolder.open();
 
-animate(() => {
-  // cube.rotation.x += 0.01;
-  // cube.rotation.y += 0.01;
-});
+  const positionFolder = cubeFolder.addFolder('Position');
+  positionFolder.add(cube.position, 'x', -5, 5);
+  positionFolder.add(cube.position, 'y', -5, 5);
+  positionFolder.add(cube.position, 'z', -5, 5);
+  positionFolder.open();
+
+  const rotationFolder = cubeFolder.addFolder('Rotation');
+  rotationFolder.add(cube.rotation, 'x', 0, Math.PI * 2);
+  rotationFolder.add(cube.rotation, 'y', 0, Math.PI * 2);
+  rotationFolder.add(cube.rotation, 'z', 0, Math.PI * 2);
+  rotationFolder.open();
+
+  const scaleFolder = cubeFolder.addFolder('Scale');
+  scaleFolder.add(cube.scale, 'x', -5, 5);
+  scaleFolder.add(cube.scale, 'y', -5, 5);
+  scaleFolder.add(cube.scale, 'z', -5, 5);
+  scaleFolder.open();
+
+  animate(() => {
+    // cube.rotation.x += 0.01;
+    // cube.rotation.y += 0.01;
+  });
+}

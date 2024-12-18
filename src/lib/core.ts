@@ -3,14 +3,7 @@ import { EffectComposer } from 'three/examples/jsm/Addons.js';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import Stats from 'three/examples/jsm/libs/stats.module.js';
 
-type AnimationFrameCallback = (t: number) => void;
-
-type Options = {
-  backgroundColor?: THREE.ColorRepresentation;
-  useControls?: boolean;
-  useComposer?: boolean;
-  useStats?: boolean;
-};
+type AnimationFrameCallback = (deltaTime: number, elapsedTime: number) => void;
 
 type Output = {
   scene: THREE.Scene;
@@ -20,6 +13,13 @@ type Output = {
 
 type OutputWithComposer = Output & { composer: EffectComposer };
 
+type Options = {
+  backgroundColor?: THREE.ColorRepresentation;
+  useControls?: boolean;
+  useComposer?: boolean;
+  useStats?: boolean;
+};
+
 type InitReturn<T extends Options> = T['useComposer'] extends true
   ? OutputWithComposer
   : Output;
@@ -28,7 +28,7 @@ export function init<T extends Options>(options: T): InitReturn<T> {
   const {
     useControls,
     useComposer,
-    useStats,
+    useStats = true,
     backgroundColor = 0x000000
   } = options;
   const renderer = new THREE.WebGLRenderer({ antialias: true });
@@ -81,8 +81,8 @@ export function init<T extends Options>(options: T): InitReturn<T> {
 
   function animate(cb: AnimationFrameCallback) {
     renderer.setAnimationLoop(() => {
-      const t = clock.getElapsedTime();
-      cb(t);
+      const deltaTime = clock.getDelta();
+      cb(deltaTime, clock.elapsedTime);
 
       controls?.update();
       stats?.update();
